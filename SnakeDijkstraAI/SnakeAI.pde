@@ -1,3 +1,5 @@
+import java.util.PriorityQueue;
+import java.util.HashSet;
 
 public class Controller {
 
@@ -7,8 +9,11 @@ public class Controller {
 
   void control() {
     /* Search for a main path to the food using Dijkstra. */
-    mainPathGeneral = dijkstra(snake, int(food_pos.x/scl), int(food_pos.y/scl), true);
-
+    // print("Dijkstra called from line 12");
+    mainPathGeneral = dijkstra(snake, int(food_pos.x/scl), int(food_pos.y/scl));
+    // println(mainPathGeneral);
+    // println();
+    // delay(30000);
     if(mainPathGeneral.size() > 0) { // If such a path is found...
       if(justDijkstra) { // ...and if the game mode is only Dijkstra search
         int[] mainHead = {int(snake.pos[0].x/scl), int(snake.pos[0].y/scl)};
@@ -29,7 +34,8 @@ public class Controller {
         }
 
         // and having the virtual snake reached the food, find the path to the tail
-        ArrayList<PVector> tracebackBack = dijkstra(virtualSnake, int(virtualSnake.pos[virtualSnake.pos.length-1].x/scl), int(virtualSnake.pos[virtualSnake.pos.length-1].y/scl), false);
+        // print("Dijkstra called from line 36");
+        ArrayList<PVector> tracebackBack = dijkstra(virtualSnake, int(virtualSnake.pos[virtualSnake.pos.length-1].x/scl), int(virtualSnake.pos[virtualSnake.pos.length-1].y/scl));
         int[] mainHead = {int(snake.pos[0].x/scl), int(snake.pos[0].y/scl)};
 
         if(tracebackBack.size() > 0) { // If it finds the path to the tail
@@ -77,17 +83,15 @@ public class Controller {
   }
 
   //Dijkstra
-  ArrayList<PVector> dijkstra(Snake currentSnake, int destinyX, int destinyY, boolean print) {
+  ArrayList<PVector> dijkstra(Snake currentSnake, int destinyX, int destinyY) {
     /* Node is each square on the map, its value is its Manhattan distance to the
        snake's head. */
     int[][] nodes = new int[horSqrs][verSqrs];
     ArrayList<PVector> queue = new ArrayList<PVector>();
     boolean[][] checked = new boolean[horSqrs][verSqrs];
-
     // First node, snake's head
     int[] firstNode = {int(currentSnake.pos[0].x/scl), int(currentSnake.pos[0].y/scl)};
     PVector currentNode = new PVector(currentSnake.pos[0].x, currentSnake.pos[0].y);
-
     // Initialize all nodes with an infinite value, except the first one, which is 0
     for (int i = 0; i < horSqrs; ++i) {
       for (int ii = 0; ii < verSqrs; ++ii) {
@@ -128,7 +132,6 @@ public class Controller {
         
         nodes[horIndex][verIndex] = value; // ...assign the value to it
         checked[horIndex][verIndex] = true;
-        //print(value);
       }
     }
 
@@ -148,11 +151,9 @@ public class Controller {
       tracebackNode[0] = int(move.x);
       tracebackNode[1] = int(move.y);
     }
-
     return tracebackNodes; // If it doesn't find a path, this returns empty
   }
 
-  //value = checkSideNode(horIndex, 0, horIndex-1, verIndex, value, nodes, queue, currentSnake); // left
   int checkSideNode(int checked, int checkTo, int checkHor, int checkVer, int cValue, int[][] nodes, ArrayList<PVector> queue, Snake cSnake) {
     if(checked > checkTo) { // Check that they are inside the world
       if(nodes[checkHor][checkVer] < Integer.MAX_VALUE) { // And that its value is not infinite
@@ -220,7 +221,7 @@ public class Controller {
 
   // Find the longest path to the tail.
   void longestPathHeadTail() {
-    ArrayList<PVector> path = dijkstra(snake, int(snake.pos[snake.pos.length-1].x/scl), int(snake.pos[snake.pos.length-1].y/scl), false);
+    ArrayList<PVector> path = dijkstra(snake, int(snake.pos[snake.pos.length-1].x/scl), int(snake.pos[snake.pos.length-1].y/scl));
 
     if(path.size() > 0) {
       //path extension algorithm
