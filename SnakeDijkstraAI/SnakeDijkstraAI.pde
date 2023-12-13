@@ -10,13 +10,13 @@ int verSqrs = 20;
 // Window mode for 36x27 board
 //int scl = 22;
 // Full screen, 36x27 board
- int scl = 20;
+//  int scl = 20;
 // Full screen, 12x12 board
- //int scl = 63;
+ int scl = 40;
 
 // Colors
 int bgcol = color(70, 70, 70);
-int gridcol = color(150, 150, 150);
+int gridcol = color(70, 70, 70);
 int snakecol = color(255, 255, 255);
 int foodcol = color(255, 0, 0);
 boolean gamePaused = false;
@@ -54,7 +54,6 @@ void draw() {
   }
 }
 
-// This is to draw the grid
 void grid(color col) {
   for(int i = 0; i < horSqrs + 1; i++) {
     stroke(col);
@@ -73,7 +72,7 @@ void updateFood() {
       match = false;
       food_pos.x = floor(random(horSqrs))*scl; 
       food_pos.y = floor(random(verSqrs))*scl;
-      // This is to make sure the food does not appear where the snake's body is
+      //food does not appear where the snake's body is
       for(int i = 0; i < snake.pos.length; i++) {
         if(food_pos.x == snake.pos[i].x && food_pos.y == snake.pos[i].y) {
           match = true;
@@ -95,7 +94,6 @@ boolean isOutsideWorld(PVector pos) {
   return false;
 }
 
-// D: use only Dijkstra, K: pause, J: slow down, L: speed up
 void keyPressed() {  
   if (key == 'd') {
     justDijkstra = !justDijkstra;

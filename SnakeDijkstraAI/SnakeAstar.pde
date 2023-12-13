@@ -1,39 +1,34 @@
-ArrayList<PVector> dijkstra(Snake currentSnake, int destinyX, int destinyY) {
-  /* Node is each square on the map, its value is its Manhattan distance to the
-      snake's head. */
+import java.util.Collections;
+
+ArrayList<PVector> astar(Snake currentSnake, int destinyX, int destinyY) {
   Node[][] nodes = new Node[verSqrs][horSqrs];
-  // PriorityQueue<Node> openList = new PriorityQueue<Node>();
   PriorityQueue<Node> openList = new PriorityQueue<>((a,b)->Float.compare(a.h+a.g, b.h+b.g));
   HashSet<Node> closedList = new HashSet<>();
-  // First node, snake's head
   int[] firstNode = {int(currentSnake.pos[0].x/scl), int(currentSnake.pos[0].y/scl)};
-  // Initialize all nodes with an infinite value, except the first one, which is 0
   for (int i = 0; i < horSqrs; ++i) {
       for (int ii = 0; ii < verSqrs; ++ii) {
-          nodes[ii][i] = new Node(i, ii, currentSnake.isInBody(i, ii));
+          nodes[i][ii] = new Node(i, ii, currentSnake.isInBody(i, ii));
       }
   }
   
   Node start = nodes[firstNode[0]][firstNode[1]];
   Node target = nodes[destinyX][destinyY];
 
-  // Start adding nodes to the queue that evaluates them one by one to assign values
   openList.add(start);
 
-  /* In this loop, the values of all nodes are filled, that is, the distance
-      Manhattan to all squares on the map it can reach is checked one by one.  */
   while(!openList.isEmpty()) {
       Node curr = openList.remove();
       closedList.add(curr);
       if(curr==target){
-          //target found
           Node temp = target;
           ArrayList<PVector> path = new ArrayList<>();
           while(temp!=start){
               path.add(new PVector(temp.x, temp.y));
               temp=temp.parent;
           }
-          return path; // If it doesn't find a path, this returns empty
+          path.add(new PVector(temp.x, temp.y));
+          Collections.reverse(path);
+          return path; 
       }
 
       for(Node neighbour : getNeighbours(curr, nodes)){
